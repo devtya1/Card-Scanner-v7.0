@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Secure Ledger</title>
+
+<style>
+:root{
+  --neon:#00f6ff;
+  --bg:#02060c;
+  --panel:#06141c;
+  --green:#00ff9a;
+  --red:#ff5c5c;
+}
+
+*{
+  box-sizing:border-box;
+  font-family:Orbitron, monospace;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--neon);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===== PAGES ===== */
+.page{
+  display:none;
+  min-height:100svh;
+  padding:clamp(14px, 4vw, 24px);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+
+.page.active{
+  display:flex;
+  flex-direction:column;
+  animation:fade .45s ease;
+}
+
+@keyframes fade{
+  from{opacity:0; transform:translateY(10px)}
+  to{opacity:1; transform:none}
+}
+
+/* ===== TITLE ===== */
+h1{
+  text-align:center;
+  font-size:clamp(.9rem, 4vw, 1.1rem);
+  letter-spacing:2px;
+  margin:8px 0 16px;
+}
+
+/* ===== BUTTON ===== */
+button{
+  width:100%;
+  padding:clamp(14px, 4vw, 18px);
+  background:transparent;
+  border:1.6px solid var(--neon);
+  color:var(--neon);
+  border-radius:14px;
+  letter-spacing:1px;
+  font-size:clamp(.75rem, 3.5vw, .9rem);
+}
+
+/* ===== SCAN AREA ===== */
+#scanArea{
+  margin-top:16px;
+}
+
+/* ===== SCANNER FRAME ===== */
+.scan-frame{
+  position:relative;
+  width:100%;
+  max-width:360px;
+  height:clamp(190px, 55vw, 260px);
+  margin-inline:auto;
+  border-radius:18px;
+  background:linear-gradient(180deg,#020c12,#04161f);
+  border:1.6px solid rgba(0,246,255,.35);
+  overflow:hidden;
+  box-shadow:0 0 25px rgba(0,246,255,.12);
+}
+
+/* HUD corners */
+.scan-frame::before,
+.scan-frame::after{
+  content:"";
+  position:absolute;
+  width:22px;
+  height:22px;
+  border:2px solid var(--neon);
+}
+.scan-frame::before{
+  top:10px; left:10px;
+  border-right:none; border-bottom:none;
+}
+.scan-frame::after{
+  bottom:10px; right:10px;
+  border-left:none; border-top:none;
+}
+
+/* scan sweep */
+.scan-line{
+  position:absolute;
+  width:100%;
+  height:4px;
+  background:linear-gradient(90deg,transparent,var(--neon),transparent);
+  animation:sweep 1.4s linear infinite;
+}
+@keyframes sweep{
+  from{top:-5%}
+  to{top:105%}
+}
+
+/* subtle noise */
+.noise{
+  position:absolute;
+  inset:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Crect width='1' height='1' fill='rgba(255,255,255,.05)'/%3E%3C/svg%3E");
+  opacity:.15;
+}
+
+/* ===== SYSTEM LOG ===== */
+.syslog{
+  margin-top:14px;
+  font-size:clamp(.65rem, 3vw, .75rem);
+  line-height:1.6;
+  opacity:.85;
+}
+.syslog span{
+  display:block;
+  opacity:0;
+  animation:log .4s ease forwards;
+}
+.syslog span:nth-child(1){animation-delay:.4s}
+.syslog span:nth-child(2){animation-delay:1s}
+.syslog span:nth-child(3){animation-delay:1.6s}
+.syslog span:nth-child(4){animation-delay:2.2s}
+
+@keyframes log{
+  to{opacity:1}
+}
+
+/* ===== INFO BOX ===== */
+.box{
+  margin-top:16px;
+  padding:14px;
+  background:var(--panel);
+  border-radius:14px;
+  border:1.5px solid rgba(0,246,255,.25);
+  animation:fade .4s ease;
+  font-size:clamp(.7rem, 3.2vw, .85rem);
+}
+
+/* ===== SMALL TEXT ===== */
+.small{
+  text-align:center;
+  font-size:clamp(.6rem, 3vw, .75rem);
+  opacity:.7;
+  margin:12px 0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SCAN PAGE -->
+<div class="page active" id="scanPage">
+  <h1>FIELD AUTHENTICATION</h1>
+
+  <button id="scanBtn">INITIATE RFID / NFC SCAN</button>
+
+  <div id="scanArea"></div>
+</div>
+
+<!-- BANK LOADER PAGE -->
+<div class="page" id="bankPage">
+  <h1>CORE BANKING NODE</h1>
+
+  <div class="box">
+    <div class="syslog">
+      <span>✓ Identity hash matched</span>
+      <span>✓ Biometric checksum verified</span>
+      <span>✓ Secure ledger handshake complete</span>
+      <span>✓ Redirecting to banking interface</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const scanBtn = document.getElementById("scanBtn");
+const scanArea = document.getElementById("scanArea");
+
+scanBtn.onclick = () => {
+  scanBtn.remove();
+
+  scanArea.innerHTML = `
+    <div class="scan-frame">
+      <div class="scan-line"></div>
+      <div class="noise"></div>
+    </div>
+
+    <div class="syslog">
+      <span>Initializing secure reader</span>
+      <span>Extracting encrypted identity payload</span>
+      <span>Validating clearance credentials</span>
+      <span>Awaiting confirmation</span>
+    </div>
+  `;
+
+  setTimeout(() => {
+    scanArea.innerHTML = `
+      <div class="box">
+        <p><b>Agent:</b> Saharsh Phirke</p>
+        <p><b>Clearance:</b> Trainee</p>
+        <p><b>Status:</b> VERIFIED</p>
+      </div>
+
+      <div class="small">Is identity information correct?</div>
+      <button onclick="goBank()">YES</button>
+    `;
+  }, 3000);
+};
+
+function goBank(){
+  scanPage.classList.remove("active");
+  bankPage.classList.add("active");
+
+  setTimeout(()=>{
+    window.location.href="bank.html";
+  },1800);
+}
+</script>
+
+</body>
+</html>
