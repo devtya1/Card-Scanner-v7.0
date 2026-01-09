@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Secure Banking</title>
+
+<style>
+:root{
+  --neon:#00f6ff;
+  --bg:#02060c;
+  --card:#071821;
+  --line:rgba(0,246,255,.22);
+  --green:#00e29a;
+  --red:#ff6b6b;
+}
+
+*{
+  box-sizing:border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:#eafcff;
+}
+
+/* ===== FULLSCREEN PAGES ===== */
+.page{
+  display:none;
+  min-height:100vh;
+  width:100%;
+}
+.page.active{display:block}
+
+/* ===== LOADING ===== */
+.loader{
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.loader div{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  border:3px solid rgba(0,246,255,.25);
+  border-top:3px solid var(--neon);
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== HEADER ===== */
+.header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  padding:16px env(safe-area-inset-right) 14px env(safe-area-inset-left);
+  background:linear-gradient(180deg,#04141c,#020b11);
+  border-bottom:1px solid var(--line);
+}
+.header h1{
+  margin:0;
+  font-size:1rem;
+  font-weight:600;
+}
+.header span{
+  font-size:.7rem;
+  opacity:.65;
+}
+
+/* ===== CARD ===== */
+.card{
+  margin:14px;
+  padding:16px;
+  background:var(--card);
+  border-radius:16px;
+  border:1px solid var(--line);
+  animation:fadeUp .45s ease;
+}
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(8px)}
+  to{opacity:1; transform:none}
+}
+
+.label{
+  font-size:.7rem;
+  opacity:.65;
+}
+
+.balance{
+  font-size:1.9rem;
+  margin:6px 0 2px;
+  font-weight:700;
+  letter-spacing:.3px;
+  color:var(--neon);
+  animation:pulse 3s infinite;
+}
+@keyframes pulse{
+  0%,100%{text-shadow:0 0 0}
+  50%{text-shadow:0 0 12px rgba(0,246,255,.45)}
+}
+
+/* ===== SECTION ===== */
+.section-title{
+  margin:18px 16px 6px;
+  font-size:.8rem;
+  opacity:.7;
+}
+
+/* ===== TRANSACTIONS ===== */
+.tx{
+  margin:0 14px 10px;
+  padding:14px;
+  background:#04131a;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.05);
+  cursor:pointer;
+  transition:.25s ease;
+}
+.tx:hover{border-color:var(--line)}
+
+.tx-top{
+  display:flex;
+  justify-content:space-between;
+  font-size:.92rem;
+  font-weight:500;
+}
+.tx-sub{
+  font-size:.7rem;
+  opacity:.6;
+  margin-top:2px;
+}
+
+.credit{color:var(--green)}
+.debit{color:var(--red)}
+
+.tx-details{
+  display:none;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px dashed rgba(255,255,255,.12);
+  font-size:.72rem;
+  line-height:1.7;
+  opacity:.85;
+}
+.tx.active .tx-details{display:block}
+
+/* ===== SAFE AREA ===== */
+.safe-bottom{
+  height:env(safe-area-inset-bottom);
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOADING -->
+<div class="page active" id="loadingPage">
+  <div class="loader"><div></div></div>
+</div>
+
+<!-- BANK PAGE -->
+<div class="page" id="bankPage">
+
+  <div class="header">
+    <h1>R&AW National Banking Interface</h1>
+    <span>Secure Session • Encrypted Channel • RBI Ledger</span>
+  </div>
+
+  <div class="card">
+    <div class="label">Available Balance</div>
+    <div class="balance">₹ 178,000,000,000</div>
+    <div class="label">Points (1 Point = ₹1)</div>
+  </div>
+
+  <div class="card">
+    <div class="label">Agent ID</div>
+    <div><b>RAW-AX91</b></div>
+    <div class="label" style="margin-top:8px;">Reference Code</div>
+    <div><b>TXN-7F91A9X</b></div>
+  </div>
+
+  <div class="section-title">Recent Transactions</div>
+
+  <div class="tx">
+    <div class="tx-top credit">
+      <span>25 Jul 2025</span>
+      <span>+178,000,000,000</span>
+    </div>
+    <div class="tx-sub">Credit • Central Allocation</div>
+    <div class="tx-details">
+      Status: <b>Completed</b><br>
+      Source: <b>Consolidated Fund of India</b><br>
+      Channel: <b>RBI Secure Ledger</b><br>
+      Settlement Time: <b>12:00 IST</b><br>
+      Authorization: <b>Omega v7.14.2</b><br>
+      Reference ID: <b>CRD-8891-ZX</b>
+    </div>
+  </div>
+
+  <div class="tx">
+    <div class="tx-top debit">
+      <span>03 Jul 2025</span>
+      <span>-2,000,000,000</span>
+    </div>
+    <div class="tx-sub">Debit • Authorized Withdrawal</div>
+    <div class="tx-details">
+      Status: <b>Completed</b><br>
+      Destination: <b>Classified Channel</b><br>
+      Execution Time: <b>05:18 IST</b><br>
+      IP Logged: <b>Masked</b><br>
+      Transfer Mode: <b>Direct Ledger Entry</b><br>
+      Reference ID: <b>Null</b>
+    </div>
+  </div>
+
+  <div class="safe-bottom"></div>
+</div>
+
+<script>
+setTimeout(()=>{
+  loadingPage.classList.remove("active");
+  bankPage.classList.add("active");
+},1600);
+
+document.addEventListener("click",e=>{
+  const tx=e.target.closest(".tx");
+  if(tx) tx.classList.toggle("active");
+});
+</script>
+
+</body>
+</html>
